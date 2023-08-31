@@ -1,0 +1,34 @@
+# Node.js artifacts
+node_modules/
+npm-debug.log*
+yarn-error.log
+yarn-debug.log*
+pnpm-debug.log*
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.sublime-*
+*.iml
+*.iml.*
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# Build and cache files
+.cache/
+dist/
+build/
+*.log
+
+# Temporary files created during development
+.bucket-cms-temp/
