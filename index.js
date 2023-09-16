@@ -98,10 +98,8 @@ const integrateBucketCMS = async () => {
     console.log(chalk("\nYou can skip and do this later in the UI if you would prefer.\n\n"))
 
     // Prompt for .env variables
-    const envVariables = await promptForEnvVariables()
-    if (envVariables.length > 0) {
-      await writeEnvVariables(envVariables, projectDir)
-    }
+    const envVariables = await promptForEnvVariables(projectDir)
+    await writeEnvVariables(envVariables, projectDir)
 
     if (envVariables.length === 4) {
       console.log(chalk.green("\nEnvironment variables stored successfully!\nRemember that you will also need to add these to your hosted server environment (Vercel or other)"))
