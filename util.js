@@ -146,6 +146,11 @@ export const promptForEnvVariables = async (projectDir) => {
       message: "Enter S3 Bucket Name:",
       default: defaultBucketName,
     },
+    {
+      type: "input",
+      name: "OPENAI_API_KEY",
+      message: "Enter your OpenAI Key if you’d like to use AI to build React Components (optional, press enter to skip):",
+    },
   ]
 
   return await inquirer.prompt(questions)
