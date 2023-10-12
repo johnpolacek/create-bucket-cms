@@ -8,6 +8,7 @@ import path from "path"
 import open from "open"
 
 import {
+  checkLicenseStatus,
   getAppDirectoryPath,
   checkIsNextProject,
   getProjectDirectory,
@@ -22,6 +23,9 @@ import {
 const integrateBucketCMS = async () => {
   console.log(chalk.green("Welcome to Bucket CMS! Let's get started...\n\n"))
   let spinner
+
+  const canProceed = await checkLicenseStatus()
+  if (!canProceed) return
 
   try {
     const projectDir = await getProjectDirectory()

@@ -207,3 +207,36 @@ export const getAvailablePort = (startPort) => {
     })
   })
 }
+
+export const checkLicenseStatus = async () => {
+  const { isCommercial } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "isCommercial",
+      message: "Is your project commercial?",
+      default: false,
+    },
+  ])
+
+  if (!isCommercial) {
+    console.log(chalk.green("Bucket CMS is free for non-commercial projects!"))
+    console.log(chalk.blue("For more details, check the license on GitHub: https://github.com/johnpolacek/bucket-cms/blob/main/LICENSE"))
+    return true
+  } else {
+    const { hasPurchased } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "hasPurchased",
+        message: "Have you purchased a license for Bucket CMS?",
+        default: false,
+      },
+    ])
+    if (hasPurchased) {
+      console.log(chalk.green("Great! Thank you for supporting Bucket CMS."))
+      return true
+    } else {
+      console.log(chalk.yellow("Please purchase a license at: https://bucket-cms.com/pricing"))
+      return false
+    }
+  }
+}
