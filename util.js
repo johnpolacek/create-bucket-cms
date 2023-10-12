@@ -223,19 +223,23 @@ export const checkLicenseStatus = async () => {
     console.log(chalk.blue("For more details, check the license on GitHub: https://github.com/johnpolacek/bucket-cms/blob/main/LICENSE"))
     return true
   } else {
-    const { hasPurchased } = await inquirer.prompt([
+    const { agreeToPay } = await inquirer.prompt([
       {
         type: "confirm",
-        name: "hasPurchased",
-        message: "Have you purchased a license for Bucket CMS?",
+        name: "agreeToPay",
+        message: "Do you agree to purchase a license for Bucket CMS once you start collecting revenue from your project?",
         default: false,
       },
     ])
-    if (hasPurchased) {
-      console.log(chalk.green("Great! Thank you for supporting Bucket CMS."))
+    if (agreeToPay) {
+      console.log(chalk.green("Thank you for your understanding and support! Please remember to purchase a license once you start collecting revenue."))
       return true
     } else {
-      console.log(chalk.yellow("Please purchase a license at: https://bucket-cms.com/pricing"))
+      console.log(
+        chalk.yellow(
+          "To use Bucket CMS for commercial projects, you are required to purchase a license once you start collecting revenue. Please revisit the licensing terms at: https://bucket-cms.com/license"
+        )
+      )
       return false
     }
   }

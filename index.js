@@ -24,8 +24,7 @@ const integrateBucketCMS = async () => {
   console.log(chalk.green("Welcome to Bucket CMS! Let's get started...\n\n"))
   let spinner
 
-  const canProceed = await checkLicenseStatus()
-  if (!canProceed) return
+  await checkLicenseStatus()
 
   try {
     const projectDir = await getProjectDirectory()
@@ -92,6 +91,11 @@ const integrateBucketCMS = async () => {
     spinner.start("Copying bucket api routes to /api directory...")
     await fs.copy(sourceApiDir, apiDir)
     spinner.succeed(`Bucket api routes copied to ${apiDir} directory.`)
+
+    // Copy the Bucket CMS logo from the cloned repo to the user's project
+    const sourceLogoPath = path.join(tempDir, "public", "bucket-cms-logo.png")
+    const targetLogoPath = path.join(projectDir, "public", "bucket-cms-logo.png")
+    await fs.copy(sourceLogoPath, targetLogoPath)
 
     // Cleanup - remove the temporary cloned directory
     await fs.remove(tempDir)
