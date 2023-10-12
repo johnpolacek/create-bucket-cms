@@ -1,6 +1,8 @@
 # Bucket CMS CLI
 
-Sometimes you don’t want a CMS, you just need a bucket. Bucket CMS is the lightest lightweight CMS around – ready for you to drop into your Next.js project. 
+Maybe you don’t need a big cloud CMS... How about a Bucket?
+
+Bucket is the world’s first AI-Powered Portable Drop-in Headless CMS designed for Next.js (no database necessary)
 
 ---
 
