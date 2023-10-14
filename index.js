@@ -93,8 +93,8 @@ const integrateBucketCMS = async () => {
     spinner.succeed(`Bucket api routes copied to ${apiDir} directory.`)
 
     // Copy the Bucket CMS logo from the cloned repo to the user's project
-    const sourceLogoPath = path.join(tempDir, "public", "bucket-cms-logo.png")
-    const targetLogoPath = path.join(projectDir, "public", "bucket-cms-logo.png")
+    const sourceLogoPath = path.join(tempDir, "public", "bucket-cms-logo.jpg")
+    const targetLogoPath = path.join(projectDir, "public", "bucket-cms-logo.jpg")
     await fs.copy(sourceLogoPath, targetLogoPath)
 
     // Cleanup - remove the temporary cloned directory
