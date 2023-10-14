@@ -16,7 +16,6 @@ import {
   promptForPackageManager,
   promptForEnvVariables,
   writeEnvVariables,
-  promptForBucketRoute,
   getAvailablePort,
 } from "./util.js"
 
@@ -98,7 +97,7 @@ const integrateBucketCMS = async () => {
     spinner.succeed("Bucket CMS repository cloned.")
 
     // Prompt for Bucket CMS route
-    const bucketRoute = await promptForBucketRoute()
+    const bucketRoute = path.join(appDir, "bucket")
 
     // Copy files from /src/app/bucket of the cloned repo to the chosen route in the target project
     const sourceBucketDir = path.join(tempDir, "src", "app", "bucket")
