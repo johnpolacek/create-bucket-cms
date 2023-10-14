@@ -116,7 +116,7 @@ const integrateBucketCMS = async () => {
 
     // Replace get-session-user.ts based on the authentication method
     spinner.start(`Configuring auth...`)
-    const targetAuthFilePath = path.join(targetBucketDir, "auth", "get-session-user.ts")
+    const targetAuthFilePath = path.join(apiDir, "auth", "get-session-user.ts")
     if (hasNextAuth) {
       const sourceAuthFilePath = path.join(tempDir, "src", "app", "api", "bucket", "auth", "next-auth", "get-session-user.ts")
       await fs.copy(sourceAuthFilePath, targetAuthFilePath, { overwrite: true })
