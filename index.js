@@ -44,7 +44,8 @@ const integrateBucketCMS = async () => {
     // Detect the authentication solution used in the project
     const packageJsonPath = path.join(projectDir, "package.json")
     console.log(chalk.green("Reading " + packageJsonPath + "..."))
-    const packageJson = require(packageJsonPath)
+    const fileContent = await fs.promises.readFile(packageJsonPath, "utf8")
+    const packageJson = JSON.parse(fileContent)
     const hasNextAuth = packageJson.dependencies && packageJson.dependencies["next-auth"]
     const hasClerk = packageJson.dependencies && packageJson.dependencies["@clerk/nextjs"]
 
