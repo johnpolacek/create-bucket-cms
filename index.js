@@ -109,6 +109,11 @@ const integrateBucketCMS = async () => {
     await fs.copy(sourceBucketDir, targetBucketDir)
     spinner.succeed(`Files copied to ${bucketRoute}.`)
 
+    spinner.start("Copying bucket api routes to /api directory...")
+    const sourceApiDir = path.join(tempDir, "src", "app", "api", "bucket")
+    await fs.copy(sourceApiDir, apiDir)
+    spinner.succeed(`Bucket api routes copied to ${apiDir} directory.`)
+
     // Replace get-session-user.ts based on the authentication method
     spinner.start(`Configuring auth...`)
     const targetAuthFilePath = path.join(targetBucketDir, "auth", "get-session-user.ts")
@@ -118,6 +123,8 @@ const integrateBucketCMS = async () => {
       spinner.succeed("Replaced get-session-user.ts with NextAuth version.")
     } else if (hasClerk) {
       const sourceAuthFilePath = path.join(tempDir, "src", "app", "api", "bucket", "auth", "clerk", "get-session-user.ts")
+      console.log(chalk.gray("sourceAuthFilePath: " + sourceAuthFilePath))
+      console.log(chalk.gray("targetAuthFilePath: " + targetAuthFilePath))
       await fs.copy(sourceAuthFilePath, targetAuthFilePath, { overwrite: true })
       spinner.succeed("Replaced get-session-user.ts with Clerk version.")
     } else {
@@ -135,11 +142,6 @@ const integrateBucketCMS = async () => {
     await fs.remove(localhostOnlyDir)
     await fs.remove(nextAuthDir)
     await fs.remove(clerkDir)
-
-    spinner.start("Copying bucket api routes to /api directory...")
-    const sourceApiDir = path.join(tempDir, "src", "app", "api", "bucket")
-    await fs.copy(sourceApiDir, apiDir)
-    spinner.succeed(`Bucket api routes copied to ${apiDir} directory.`)
 
     // Copy the Bucket CMS logo from the cloned repo to the user's project
     const sourceLogoPath = path.join(tempDir, "public", "bucket-cms-logo.jpg")
