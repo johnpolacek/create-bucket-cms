@@ -173,26 +173,6 @@ export const writeEnvVariables = async (envVariables, projectDir) => {
   }
 }
 
-export const promptForBucketRoute = async () => {
-  const questions = [
-    {
-      type: "input",
-      name: "bucketRoute",
-      message: "Enter the desired route on your app for the Bucket CMS admin interface:",
-      default: "/src/app/bucket",
-      validate: (input) => {
-        if (!input.includes("/app/") && !input.includes("/pages/")) {
-          return "The route should start with either /app or /pages."
-        }
-        return true
-      },
-    },
-  ]
-
-  const answers = await inquirer.prompt(questions)
-  return answers.bucketRoute
-}
-
 export const getAvailablePort = (startPort) => {
   return new Promise((resolve) => {
     const server = net.createServer()
