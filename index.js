@@ -44,7 +44,11 @@ const integrateBucketCMS = async () => {
     // Ensure /app/api directory exists
     let apiDir = path.join(appDir, "api")
     if (!fs.existsSync(apiDir)) {
+      console.log(chalk.gray("api directory not found, creating new..."))
       await fs.mkdir(apiDir)
+      console.log(chalk.green("api directory created"))
+    } else {
+      console.log(chalk.gray("api directory found"))
     }
     apiDir = path.join(appDir, "api", "bucket")
 
