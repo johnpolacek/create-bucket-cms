@@ -42,15 +42,15 @@ const integrateBucketCMS = async () => {
     console.log(chalk.green("Found: " + appDir))
 
     // Detect the authentication solution used in the project
-    const packageJsonPath = path.join(projectDir, "package.json");
-    const packageJson = require(packageJsonPath);
-    const hasNextAuth = packageJson.dependencies && packageJson.dependencies["next-auth"];
-    const hasClerk = packageJson.dependencies && packageJson.dependencies["@clerk/nextjs"];
+    const packageJsonPath = path.join(projectDir, "package.json")
+    const packageJson = require(packageJsonPath)
+    const hasNextAuth = packageJson.dependencies && packageJson.dependencies["next-auth"]
+    const hasClerk = packageJson.dependencies && packageJson.dependencies["@clerk/nextjs"]
 
     if (hasNextAuth) {
-      console.log(chalk.green("NextAuth detected."));
+      console.log(chalk.green("NextAuth detected."))
     } else if (hasClerk) {
-      console.log(chalk.green("Clerk auth detected."));
+      console.log(chalk.green("Clerk auth detected."))
     } else {
       console.log(chalk.orange("Warning: No auth solution detected."))
       console.log(chalk.orange("Localhost auth bypass will be used."))
@@ -73,8 +73,7 @@ const integrateBucketCMS = async () => {
     // Get dependencies dynamically
     const repoPackageJsonUrl = "https://raw.githubusercontent.com/johnpolacek/bucket-cms/main/package.json"
     const repoDependencies = await getDependenciesFromRepo(repoPackageJsonUrl)
-    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth").filter((dep) => dep.includes('clerk')) // exclude auth dependencies - that is user-land
-
+    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth").filter((dep) => dep.includes("clerk")) // exclude auth dependencies - that is user-land
 
     spinner.succeed(`Loaded dependencies`)
     const packageManager = await promptForPackageManager()
@@ -108,16 +107,35 @@ const integrateBucketCMS = async () => {
     await fs.copy(sourceBucketDir, targetBucketDir)
     spinner.succeed(`Files copied to ${bucketRoute}.`)
 
-    // Replace the layout.tsx file with layout-default.tsx in the target directory
-    const sourceLayoutDefaultPath = path.join(sourceBucketDir, "layout-default.tsx")
-    const targetLayoutPath = path.join(targetBucketDir, "layout.tsx")
-    if (fs.existsSync(sourceLayoutDefaultPath)) {
-      await fs.copy(sourceLayoutDefaultPath, targetLayoutPath, { overwrite: true })
-      console.log(chalk.green("Set default admin auth layout."))
+    // Replace get-session-user.ts based on the authentication method
+    spinner.start(`Configuring auth...`)
+    const targetAuthFilePath = path.join(targetBucketDir, "auth", "get-session-user.ts")
+    if (hasNextAuth) {
+      const sourceAuthFilePath = path.join(tempDir, "src", "app", "api", "bucket", "auth", "next-auth", "get-session-user.ts")
+      await fs.copy(sourceAuthFilePath, targetAuthFilePath, { overwrite: true })
+      spinner.succeed("Replaced get-session-user.ts with NextAuth version.")
+    } else if (hasClerk) {
+      const sourceAuthFilePath = path.join(tempDir, "src", "app", "api", "bucket", "auth", "clerk", "get-session-user.ts")
+      await fs.copy(sourceAuthFilePath, targetAuthFilePath, { overwrite: true })
+      spinner.succeed("Replaced get-session-user.ts with Clerk version.")
+    } else {
+      const sourceAuthFilePath = path.join(tempDir, "src", "app", "api", "bucket", "auth", "localhost-only", "get-session-user.ts")
+      await fs.copy(sourceAuthFilePath, targetAuthFilePath, { overwrite: true })
+      spinner.succeed("Replaced get-session-user.ts with localhost bypass.")
     }
 
-    const sourceApiDir = path.join(tempDir, "src", "app", "api", "bucket")
+    // Remove auth directories
+    console.log(chalk.gray("Cleaning up..."))
+    const localhostOnlyDir = path.join(tempDir, "src", "app", "api", "bucket", "auth", "localhost-only")
+    const nextAuthDir = path.join(tempDir, "src", "app", "api", "bucket", "auth", "next-auth")
+    const clerkDir = path.join(tempDir, "src", "app", "api", "bucket", "auth", "clerk")
+
+    await fs.remove(localhostOnlyDir)
+    await fs.remove(nextAuthDir)
+    await fs.remove(clerkDir)
+
     spinner.start("Copying bucket api routes to /api directory...")
+    const sourceApiDir = path.join(tempDir, "src", "app", "api", "bucket")
     await fs.copy(sourceApiDir, apiDir)
     spinner.succeed(`Bucket api routes copied to ${apiDir} directory.`)
 
