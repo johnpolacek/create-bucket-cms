@@ -41,6 +41,22 @@ const integrateBucketCMS = async () => {
     }
     console.log(chalk.green("Found: " + appDir))
 
+    // Detect the authentication solution used in the project
+    const packageJsonPath = path.join(projectDir, "package.json");
+    const packageJson = require(packageJsonPath);
+    const hasNextAuth = packageJson.dependencies && packageJson.dependencies["next-auth"];
+    const hasClerk = packageJson.dependencies && packageJson.dependencies["@clerk/nextjs"];
+
+    if (hasNextAuth) {
+      console.log(chalk.green("NextAuth detected."));
+    } else if (hasClerk) {
+      console.log(chalk.green("Clerk auth detected."));
+    } else {
+      console.log(chalk.orange("Warning: No auth solution detected."))
+      console.log(chalk.orange("Localhost auth bypass will be used."))
+      console.log(chalk.orange("Add authentication to use Bucket CMS in production."))
+    }
+
     // Ensure /app/api directory exists
     let apiDir = path.join(appDir, "api")
     if (!fs.existsSync(apiDir)) {
@@ -57,14 +73,14 @@ const integrateBucketCMS = async () => {
     // Get dependencies dynamically
     const repoPackageJsonUrl = "https://raw.githubusercontent.com/johnpolacek/bucket-cms/main/package.json"
     const repoDependencies = await getDependenciesFromRepo(repoPackageJsonUrl)
-    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth") // exclude auth dependencies - that is user-land
+    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth").filter((dep) => dep.includes('clerk')) // exclude auth dependencies - that is user-land
 
-    spinner.succeed(`Found ${dependencies.length} dependencies`)
 
+    spinner.succeed(`Loaded dependencies`)
     const packageManager = await promptForPackageManager()
 
     // Install required dependencies
-    spinner.start("Installing dependencies...")
+    spinner.start(`Installing ${dependencies.length} dependencies...`)
     await execa(packageManager, ["install", ...dependencies])
     spinner.succeed("Dependencies installed.")
 
