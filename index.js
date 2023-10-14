@@ -53,6 +53,7 @@ const integrateBucketCMS = async () => {
     // Get dependencies dynamically
     const repoPackageJsonUrl = "https://raw.githubusercontent.com/johnpolacek/bucket-cms/main/package.json"
     const dependencies = await getDependenciesFromRepo(repoPackageJsonUrl)
+    dependencies = dependencies.filter((dep) => dep !== "next-auth") // exclude auth dependencies - that is user-land
 
     spinner.succeed(`Found ${dependencies.length} dependencies`)
 
@@ -86,6 +87,14 @@ const integrateBucketCMS = async () => {
     await fs.ensureDir(targetBucketDir) // Ensure the directory exists before copying
     await fs.copy(sourceBucketDir, targetBucketDir)
     spinner.succeed(`Files copied to ${bucketRoute}.`)
+
+    // Replace the layout.tsx file with layout-default.tsx in the target directory
+    const sourceLayoutDefaultPath = path.join(sourceBucketDir, "layout-default.tsx")
+    const targetLayoutPath = path.join(targetBucketDir, "layout.tsx")
+    if (fs.existsSync(sourceLayoutDefaultPath)) {
+      await fs.copy(sourceLayoutDefaultPath, targetLayoutPath, { overwrite: true })
+      console.log(chalk.green("Set default admin auth layout."))
+    }
 
     const sourceApiDir = path.join(tempDir, "src", "app", "api", "bucket")
     spinner.start("Copying bucket api routes to /api directory...")
