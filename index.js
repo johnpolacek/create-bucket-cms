@@ -22,7 +22,7 @@ import {
 
 const integrateBucketCMS = async () => {
   console.log(chalk.green("Welcome to Bucket CMS! Let's get started...\n\n"))
-  let spinner
+  let spinner = ora()
 
   await checkLicenseStatus()
 
@@ -43,6 +43,7 @@ const integrateBucketCMS = async () => {
 
     // Detect the authentication solution used in the project
     const packageJsonPath = path.join(projectDir, "package.json")
+    console.log(chalk.green("Reading " + packageJsonPath + "..."))
     const packageJson = require(packageJsonPath)
     const hasNextAuth = packageJson.dependencies && packageJson.dependencies["next-auth"]
     const hasClerk = packageJson.dependencies && packageJson.dependencies["@clerk/nextjs"]
@@ -68,7 +69,7 @@ const integrateBucketCMS = async () => {
     }
     apiDir = path.join(appDir, "api", "bucket")
 
-    spinner = ora("Fetching Bucket CMS package dependencies...").start()
+    spinner.start("Fetching Bucket CMS package dependencies...")
 
     // Get dependencies dynamically
     const repoPackageJsonUrl = "https://raw.githubusercontent.com/johnpolacek/bucket-cms/main/package.json"
