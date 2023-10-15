@@ -74,7 +74,7 @@ const integrateBucketCMS = async () => {
     // Get dependencies dynamically
     const repoPackageJsonUrl = "https://raw.githubusercontent.com/johnpolacek/bucket-cms/main/package.json"
     const repoDependencies = await getDependenciesFromRepo(repoPackageJsonUrl)
-    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth").filter((dep) => dep.includes("clerk")) // exclude auth dependencies - that is user-land
+    const dependencies = repoDependencies.filter((dep) => dep !== "next-auth").filter((dep) => !dep.includes("clerk")) // exclude auth dependencies - that is user-land
 
     spinner.succeed(`Loaded dependencies`)
     const packageManager = await promptForPackageManager()
@@ -82,7 +82,7 @@ const integrateBucketCMS = async () => {
     // Install required dependencies
     spinner.start(`Installing ${dependencies.length} dependencies...`)
     await execa(packageManager, ["install", ...dependencies])
-    spinner.succeed("Dependencies installed.")
+    spinner.succeed(`${dependencies.length} dependencies installed`)
 
     // Clone the GitHub repo to a temporary directory
     const tempDir = path.join(projectDir, ".bucket-cms-temp")
@@ -167,8 +167,9 @@ const integrateBucketCMS = async () => {
 
     const port = await getAvailablePort(3000)
     setTimeout(() => {
-      open(`http://localhost:${port}` + bucketRoute.split("/app")[1])
-    }, 4000)
+      console.log(chalk.green(`\nGo to http://localhost:${port}/bucket to get started`))
+      open(`http://localhost:${port}/bucket`)
+    }, 5000)
 
     console.log(chalk(`\nStarting up dev server on port ${port}...`))
     await fs.remove(path.join(projectDir, ".next"))
